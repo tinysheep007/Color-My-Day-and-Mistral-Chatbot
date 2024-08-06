@@ -2,25 +2,34 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+// preset json object that match emtions to colors in HEX
 import { emotionConfig } from "./config";
 import { ColorRing } from "react-loader-spinner";
 
 export default function Home() {
   const router = useRouter();
   const defaultColor = "#f5dff1";
+  const [emotionColor, setEmotionColor] = useState(defaultColor);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [APIresult, setAPIResult] = useState([]);
-  const [displayMode, setDisplayMode] = useState("all"); // "all" or "top3"
-  const [emotionColor, setEmotionColor] = useState(defaultColor);
+  // change all much emotions is displaying "all" or "top3"
+  const [displayMode, setDisplayMode] = useState("all"); 
   const [resultVisible, setResultVisible] = useState(false);
 
+  // function that get prediction from API and set state
   const predict = async () => {
+    // if there is non empty input
     if(input){
+      // start loading
       setLoading(true);
+      // results not loaded yet
       setResultVisible(false);
       try {
+        // get the API response
         const response = await axios.post("/api/emotion", { input });
+        // we can set it either to response.data.result or response.data.slicedRes
+        // slicesRes is preset to be only top 5 emotions in the backend
         setAPIResult(response.data.result);
       } catch (error) {
         console.error("Error fetching data: ", error);
@@ -30,6 +39,7 @@ export default function Home() {
     }
   };
 
+  // whenever input changes, we predict after no change in next 1 sec
   useEffect(() => {
     const timeout = setTimeout(() => {
       predict();
@@ -38,27 +48,39 @@ export default function Home() {
     return () => clearTimeout(timeout);
   }, [input]);
 
+  // whenever API result got updated into our state
   useEffect(() => {
+    // if there is valid result
     if (APIresult && APIresult.length > 0) {
+      // change background Color of web page
       changeColor(APIresult[0].label);
+      // allow user to see results
       setResultVisible(true);
     }
   }, [APIresult]);
 
+  // change display mode based on checked true or false
   const handleToggleChange = (event) => {
     setDisplayMode(event.target.checked ? "top3" : "all");
   };
 
+  // set the filtered value based on our display mode
   const filteredResults = displayMode === "top3" ? APIresult.slice(0, 3) : APIresult;
 
+  // change web page background color based on top emotion
+  // label is actual name of the emotion
   function changeColor(label) {
+    // if API results are valid
     if (APIresult && APIresult.length > 0) {
+      // get our preset color from the corresponding emotion
       const colorHex = emotionConfig[label].colorHex;
+      // update state
       setEmotionColor(colorHex);
     }
   }
 
   return (
+    // here we can set dynamic background color based on state
     <main style={{ backgroundColor: emotionColor }} className="transition-background-color duration-500 ease-in-out flex min-h-screen flex-col items-center justify-center p-8 bg-gray-100">
       <h1 className="text-5xl font-extrabold mb-8 text-gray-800">🧑‍🎨️ Color My Day 🖌</h1>
       <button className="mb-6 p-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300" onClick={() => router.push("/chatbot")}>Chatbot</button>
@@ -67,8 +89,8 @@ export default function Home() {
           className="w-full p-4 mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner transition-shadow duration-300"
           style={{ 
             borderColor: 'black', 
-            borderWidth: '2px', // Adjust thickness as needed
-            backgroundColor: 'rgba(255, 255, 255, 0.5)' // Translucent white background
+            borderWidth: '2px', 
+            backgroundColor: 'rgba(255, 255, 255, 0.5)' 
           }}
           placeholder="Type here ..."
           onChange={(e) => setInput(e.target.value)}

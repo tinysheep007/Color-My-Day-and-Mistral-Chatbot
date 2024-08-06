@@ -6,40 +6,53 @@ import axios from "axios";
 
 export default function Chatbot() {
   const router = useRouter();
+  // store current user message
   const [message, setMessage] = useState("");
+  // stores all existing texts from both user and system
   const [chatHistory, setChatHistory] = useState([
     {
       role: "system",
       message: "Hi! Ask me or tell me anything! I am mistralai/Mistral-Nemo-Instruct-2407."
     }
   ]);
+  // check if model is running(loading response)
   const [isGenerating, setIsGenerating] = useState(false);
 
+  // function that handles submit message to chatbot
   const handleText = async () => {
+    // if input exissts
     if (message.trim()) {
-
+      // attach previous chatHistory and add addtional user messag that we just submited
       setChatHistory([...chatHistory, { role: "user", message }]);
+      // we started waiting for model to response
       setIsGenerating(true);
+      // clear input field
       setMessage(""); 
 
       try {
+        // get the result from backend(hugging face API)
         const res = await axios.post("/api/chat", { userMessage: message });
+
+        // get the reply property of our json object
         const botResponse = res.data.reply;
 
+        // add model is loading prompt for users to know
         setChatHistory(prevHistory => [
           ...prevHistory,
           { role: "system", message: "Model is thinking hard..." }
         ]);
 
+        // after 1 second timeout, load the response in and add to chat history
+        // also get rid of old MODEL IS THINKING HARD...
         setTimeout(() => {
           setChatHistory(prevHistory => [
-            // get rid of old MODEL IS THINKING HARD...
             ...prevHistory.slice(0, -1), 
             { role: "system", message: botResponse }
           ]);
         }, 1000); 
 
       } catch (error) {
+        // handle error case add error text to chat history
         console.error("Error sending message: ", error);
         setChatHistory(prevHistory => [
           ...prevHistory,
@@ -64,7 +77,6 @@ export default function Chatbot() {
           Color My Day
         </button>
 
-        {/* New div with border */}
         <div className="w-full max-w-2xl border-2 border-black p-4 rounded-lg bg-white">
           <div className="flex flex-col space-y-4 mb-4">
             {chatHistory.map((entry, index) => (
