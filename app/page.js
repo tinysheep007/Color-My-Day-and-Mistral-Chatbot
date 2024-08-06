@@ -44,7 +44,16 @@ export default function Home() {
     const timeout = setTimeout(() => {
       predict();
     }, 1000);
-
+    /**
+     *  This ensures that if the input changes again before the timeout 
+     * completes, the previous timeout is cleared. This prevents multiple
+     * timeouts from running simultaneously 
+     * and ensures only the latest predict call is made after the delay.
+     * 
+     *  Any new changes within 1 second, the previous predict()  called will be
+     * canceled.
+     */
+    
     return () => clearTimeout(timeout);
   }, [input]);
 
