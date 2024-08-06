@@ -1,3 +1,37 @@
+
+
+## 🧠 Emotion Detection and 🤖 Chatbot Integration
+
+Site is hosted through Vercel: https://color-my-day-and-mistral-chatbot.vercel.app/
+
+
+### 🧠 Emotion Detection
+
+Type a message into the text field on the homepage to try out the emotion detection feature powered by the Hugging Face Inference API. This API uses text classification to detect various emotions based on your input. 
+
+**Note:** The first time you use the emotion detection, it might take a bit longer to process. Subsequent requests will be faster.
+
+**How It Works:**
+1. Enter your message into the text field.
+2. Wait a few seconds for the emotion detection to process.
+3. The detected emotions will be listed below the text field, showing the labels and their respective scores.
+
+### 🤖 Chatbot with Mistral Model
+
+On the chatbot page, you can interact with a text generation model provided by Hugging Face. This model, based on the Mistral architecture, generates responses to your messages.
+
+**Features:**
+1. **User Interaction**: Type your message and hit Enter or click the "Send" button to communicate with the chatbot.
+2. **Thinking Indication**: While the model is generating a response, you'll see a "Model is thinking hard..." message.
+3. **Response Generation**: After a short delay, the chatbot will display the generated response.
+
+**Instructions:**
+- **Chatbot Page**: Navigate to the chatbot page by clicking the "Chatbot" button.
+- **Type Your Message**: Enter a message and press Enter or click "Send."
+- **View Responses**: The chatbot will update with responses and show a thinking message while processing.
+
+---
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
